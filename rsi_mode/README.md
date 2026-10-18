@@ -10,6 +10,8 @@ small and conservative.
   duplicate candidate hashes, and approved scores that do not exceed the best
   approved score.
 - `curve.py` renders the score curve from the append-only promotion records.
+- `collect.py` reads PRAXIST's frontier manifest and turns the rank-1 winner of
+  each generation into a proposed promotion record.
 - `verify.py` checks that the sealed evaluator, golden cases, baseline, and
   task contract still match their recorded hashes.
 

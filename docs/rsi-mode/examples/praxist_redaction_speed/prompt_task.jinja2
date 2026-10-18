@@ -1,14 +1,32 @@
 You are improving one security-critical subsystem of PRAXIST: the pure-Python
 redaction layer.
 
-The candidate is `workspace/redaction.py`. You may edit only that file.
+The candidate is `workspace/redaction.py`. Do not overwrite the seed file in
+place: the task guard treats it as protected. Create a candidate directory under
+`experiments/.../variants/<peer_id>_<name>/` containing a `redaction.py`, and
+score that directory with the evaluator's `--workspace` argument. The evaluator
+supports both the default `workspace/` and an explicit candidate directory.
 
 First inspect the current implementation and the task description. Then run the
 evaluator to establish the current score:
 
 ```bash
 python evaluations/run.py
+python evaluations/run.py --workspace experiments/run_redaction_direct_1/variants/<peer_id>_<name>
 ```
+
+Time budget: treat this as a 10-minute session. In the first two minutes,
+create a candidate directory, copy the seed `workspace/redaction.py` into it,
+apply one safe optimization, and score it with `--workspace`. Submit a finding
+as soon as you have a correct candidate. Do not spend the whole session
+profiling or reading; a measured candidate is more valuable than a perfect plan.
+
+Recommended first candidate: a line-level literal prefilter. For each line, if
+none of the marker substrings (`bearer`, `sk-`, `ghp_`, `api_key`, `api-key`,
+`apikey`, `auth_token`, `access_token`, `secret`, `password`, `api key`, or a
+backtick after `key`) appears, return the line unchanged. Otherwise apply the
+existing `_SECRET_PATTERNS` to that line. Preserve the final newline and the
+exact output format. This is a starting point, not the only valid mechanism.
 
 Read the `evaluation_summary.json` it writes. If the score is 1.0, the candidate
 is baseline-equal. Your goal is a correct implementation with a higher

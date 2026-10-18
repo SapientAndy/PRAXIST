@@ -13,7 +13,7 @@ from pathlib import Path
 
 
 TASK_ROOT = Path(__file__).resolve().parents[1]
-CANDIDATE = TASK_ROOT / "workspace" / "redaction.py"
+DEFAULT_WORKSPACE = TASK_ROOT / "workspace"
 SEALED_CHECK = TASK_ROOT / "sealed_tests" / "check.py"
 BASELINE = TASK_ROOT / "assets" / "baseline.json"
 
@@ -28,9 +28,13 @@ def sha256(path: Path) -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--workspace", type=Path, default=DEFAULT_WORKSPACE)
     parser.add_argument("--output-dir", default=str(TASK_ROOT / "evaluations"))
     parser.add_argument("--json-out", default="")
     args, _unknown = parser.parse_known_args()
+
+    workspace = args.workspace.resolve()
+    candidate = workspace / "redaction.py"
 
     output_dir = Path(args.output_dir).resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -53,12 +57,12 @@ def main() -> int:
     try:
         baseline = json.loads(BASELINE.read_text(encoding="utf-8"))
         baseline_ms = float(baseline["baseline_median_ms"])
-        if not CANDIDATE.is_file():
-            raise FileNotFoundError(f"candidate not found: {CANDIDATE}")
+        if not candidate.is_file():
+            raise FileNotFoundError(f"candidate not found: {candidate}")
 
         with tempfile.TemporaryDirectory(prefix="redaction_candidate_") as tmp:
             candidate_copy = Path(tmp) / "redaction.py"
-            shutil.copyfile(CANDIDATE, candidate_copy)
+            shutil.copyfile(candidate, candidate_copy)
             env = dict(os.environ)
             env["CANDIDATE_PATH"] = str(candidate_copy)
             proc = subprocess.run(
@@ -92,8 +96,9 @@ def main() -> int:
             "benchmark_chars": check.get("benchmark_chars"),
         }
         summary["complete"] = bool(correctness == 1.0 and candidate_ms)
-        summary["candidate_sha256"] = sha256(CANDIDATE)
-        summary["candidate_bytes"] = CANDIDATE.stat().st_size
+        summary["candidate_sha256"] = sha256(candidate)
+        summary["candidate_bytes"] = candidate.stat().st_size
+        summary["candidate_path"] = str(candidate)
     except Exception as exc:
         summary["complete"] = False
         summary["failures"].append({

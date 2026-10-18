@@ -76,6 +76,8 @@ which roots are mounted read-only for the candidate.
 - [`PHASE1_REDACTION.md`](PHASE1_REDACTION.md) — the first subsystem-level
   self-improvement task: PRAXIST's redaction layer under a sealed correctness
   and throughput evaluator.
+- [`PHASE1_REVIEW.md`](PHASE1_REVIEW.md) — the external differential audit that
+  found cross-line redaction gaps in the fast candidates and blocked promotion.
 - `../../rsi_mode/` — executable promotion recorder and score-curve renderer.
   The recorder refuses correctness failures, duplicate candidates, and approved
   scores that do not improve on the best approved score; approval is explicit.

@@ -8,6 +8,14 @@ PRAXIST: the pure-Python redaction layer.
 Only `workspace/redaction.py` may be edited. It is a copy of
 `praxist/core/redaction.py` from the pristine PRAXIST source.
 
+Do not overwrite the seed file in place: the task guard treats it as protected.
+Create a candidate directory under `experiments/.../variants/<peer_id>_<name>/`
+containing `redaction.py`, and score it with:
+
+```bash
+python evaluations/run.py --workspace experiments/run_redaction_direct_1/variants/<peer_id>_<name>
+```
+
 Forbidden:
 
 - `evaluations/**`
