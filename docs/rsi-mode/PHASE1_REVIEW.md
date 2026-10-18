@@ -15,6 +15,14 @@ than the current 23-case sealed evaluator.
 - sealed correctness: 23/23
 - status: proposed
 
+## Gen 2 — `gen2_peer1_markerdispatch_v3`
+
+- sealed score: 15.591574 (same candidate also measured at 8.51x and 11.53x;
+  high run-to-run variance)
+- sealed correctness: 23/23
+- external differential fuzz: **36 output mismatches in 1,200 cases**
+- status: proposed; reject
+
 ## Safe tradeoff — `gen1_peer1_span_slice`
 
 - sealed score: 5.209935

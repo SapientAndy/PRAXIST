@@ -151,13 +151,15 @@ includes cross-line and differential cases.
 
 ### Promotion state
 
-Three append-only records are currently `proposed`, not approved:
+Four append-only records are currently `proposed`, not approved:
 
 - gen 0: `6.999577`, candidate SHA-256 `be907da19013...`
 - gen 1 fast: `12.132611`, candidate SHA-256 `54367dc52441...` — **fails the
   external cross-line audit; reject**
 - gen 1 safe: `5.209935`, candidate SHA-256 `e085ecb755bf...` — **recommended
   for human approval**; 1,200/1,200 external fuzz cases exact
+- gen 2 fast: `15.591574`, candidate SHA-256 `f6c932b9eaf2...` — **fails the
+  external cross-line audit; reject**
 
 A human approval is still required before any becomes the parent of a
 production branch. The records and the score curve are in `promotions/`.
