@@ -34,8 +34,9 @@ The candidate must preserve the exact behavior of:
 - `scan_text(text) -> hits`
 
 The sealed golden cases cover bearer tokens, OpenAI-style keys, GitHub tokens,
-named secrets, nested JSON, unicode, empty input, clean text, and near-miss
-strings. All cases must match exactly.
+named secrets, nested JSON, unicode, empty input, clean text, near-miss
+strings, cross-line secrets, duplicate secrets, and Unicode length changes.
+All cases must match exactly.
 
 ## Score
 

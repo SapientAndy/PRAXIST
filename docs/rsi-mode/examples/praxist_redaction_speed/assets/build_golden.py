@@ -26,6 +26,12 @@ TEXT_INPUTS = [
     ("empty", ""),
     ("unicode", "配置：模型名称 = 万格智能；没有密钥。"),
     ("false_positive", "Bearer short and sk-short"),
+    ("cross_line_bearer", "Bearer \nabcdefghijklmnop123456"),
+    ("cross_line_named", "api\nkey=supersecretvalue"),
+    ("cross_line_password", "password:\nhunter2xyz"),
+    ("duplicate_bearer", "Bearer abcdefghijklmnop123456\n\nBearer abcdefghijklmnop123456"),
+    ("duplicate_named", "api_key=supersecretvalue\n\napi_key=supersecretvalue"),
+    ("unicode_length_change", "İİİ api_key=supersecretvalue İİİ"),
 ]
 
 JSON_INPUTS = [

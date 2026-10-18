@@ -88,6 +88,58 @@
       "hits": []
     },
     {
+      "name": "text_cross_line_bearer",
+      "kind": "text",
+      "input": "Bearer \nabcdefghijklmnop123456",
+      "expected": "<redacted:bearer_token>",
+      "hits": [
+        "bearer_token"
+      ]
+    },
+    {
+      "name": "text_cross_line_named",
+      "kind": "text",
+      "input": "api\nkey=supersecretvalue",
+      "expected": "api\nkey=supersecretvalue",
+      "hits": []
+    },
+    {
+      "name": "text_cross_line_password",
+      "kind": "text",
+      "input": "password:\nhunter2xyz",
+      "expected": "<redacted:named_secret>",
+      "hits": [
+        "named_secret"
+      ]
+    },
+    {
+      "name": "text_duplicate_bearer",
+      "kind": "text",
+      "input": "Bearer abcdefghijklmnop123456\n\nBearer abcdefghijklmnop123456",
+      "expected": "<redacted:bearer_token>\n\n<redacted:bearer_token>",
+      "hits": [
+        "bearer_token"
+      ]
+    },
+    {
+      "name": "text_duplicate_named",
+      "kind": "text",
+      "input": "api_key=supersecretvalue\n\napi_key=supersecretvalue",
+      "expected": "<redacted:named_secret>\n\n<redacted:named_secret>",
+      "hits": [
+        "named_secret"
+      ]
+    },
+    {
+      "name": "text_unicode_length_change",
+      "kind": "text",
+      "input": "İİİ api_key=supersecretvalue İİİ",
+      "expected": "İİİ <redacted:named_secret> İİİ",
+      "hits": [
+        "named_secret"
+      ]
+    },
+    {
       "name": "json_nested_secret",
       "kind": "json",
       "input": {

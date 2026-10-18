@@ -5,7 +5,7 @@
   "files": {
     "evaluations/run.py": "40841f1eb0487fb3fb8f0046f47d4262c9b785485f4eba835a80e4dda7a7ec8e",
     "sealed_tests/check.py": "d8e78577dbf1a7d5c4e91c5ff02adc962f192958ee10c06755cc1f86596b5203",
-    "sealed_tests/golden.json": "85e8cf8c58d325461c83f838c487a0be47212cb2fb2c6a773566bc025d49c6eb",
+    "sealed_tests/golden.json": "63165a5a00f638d6732506d6b9c4478394b92b41a985f02fdf20d83c5d7e5071",
     "task.yaml": "e7d14fb9a56bb525f1e69dc27a0eab3cd73d28f186d33b5de798f4d529b9700d",
     "assets/baseline.json": "2b5f25972221cb55a786cff1d37f4657fa1ec06a6b92f3e72290e94e0fbb6e15"
   }

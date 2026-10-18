@@ -58,13 +58,30 @@ The sealed 23-case set does not cover these shapes. Therefore the 12.13x score
 is a **benchmark-specific throughput result**, not evidence that the candidate
 preserves the full redaction contract.
 
+## Hardened evaluator re-evaluation
+
+After the audit, six cross-line / duplicate / Unicode cases were added to the
+sealed set (29 cases total). Results:
+
+| Candidate | Correctness | Score | Decision |
+|---|---:|---:|---|
+| baseline | 29/29 | 0.9005 | reference |
+| `span_slice` | 29/29 | 5.8661 | recommended |
+| gen1 fast | 25/29 | 10.7315 | incomplete; reject |
+| gen2 fast | 25/29 | 13.7653 | incomplete; reject |
+
+The fast candidates remain excluded. `span_slice` is the only candidate that
+passes both the hardened 29-case evaluator and the 1,200-case differential
+fuzz.
+
 ## Decision
 
-Do not approve either candidate as a parent. Do not copy it into the pristine
-`workspace/redaction.py`.
+Do not approve either fast candidate as a parent. Do not copy it into the pristine
+`workspace/redaction.py`. `span_slice` is the only proposed candidate recommended
+for human approval; the fast candidates remain rejected.
 
-Required next step: add cross-line and differential cases to the sealed
-evaluator, then rerun the candidate through it. A candidate that fails the
-hardened evaluator is rejected regardless of speed. This is the correct
+Required next step (completed): the hardened evaluator now includes cross-line
+and differential cases. A candidate that fails the hardened evaluator is
+rejected regardless of speed. This is the correct
 human-gate behavior: the research loop found a fast candidate, and the audit
 prevented it from becoming the next generation's parent.

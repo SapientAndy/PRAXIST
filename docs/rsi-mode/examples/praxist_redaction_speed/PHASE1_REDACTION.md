@@ -149,6 +149,25 @@ throughput results, not proof that the full redaction contract is preserved.
 The right response is to reject the candidates until the sealed evaluator
 includes cross-line and differential cases.
 
+### Hardened re-evaluation
+
+The sealed evaluator was then hardened with six cases: cross-line bearer,
+cross-line named secret, cross-line password, duplicate bearer, duplicate named
+secret, and a Unicode length-change input. This brought the sealed set to 29
+cases.
+
+| Candidate | Hardened correctness | Hardened score | Decision |
+|---|---:|---:|---|
+| pristine baseline | 29/29 | 0.9005 | reference; score reflects benchmark noise |
+| `gen1_peer1_span_slice` | 29/29 | **5.8661** | **safe; recommended** |
+| `gen1_peer0_marker_dispatch_v2` | 25/29 | 10.7315 | incomplete; reject |
+| `gen2_peer1_markerdispatch_v3` | 25/29 | 13.7653 | incomplete; reject |
+
+The fast candidates keep a high speed number but fail the cross-line/duplicate
+cases. The safe candidate is slower, passes 29/29, and also passed the
+1,200-case differential fuzz. The hardened evaluator is the gate to use going
+forward.
+
 ### Promotion state
 
 Four append-only records are currently `proposed`, not approved:
@@ -162,7 +181,9 @@ Four append-only records are currently `proposed`, not approved:
   external cross-line audit; reject**
 
 A human approval is still required before any becomes the parent of a
-production branch. The records and the score curve are in `promotions/`.
+production branch. The hardened evaluator reclassifies both fast records as
+rejected; `span_slice` remains the only proposed candidate recommended for
+approval. The records and the score curve are in `promotions/`.
 
 ### What the curve means
 
