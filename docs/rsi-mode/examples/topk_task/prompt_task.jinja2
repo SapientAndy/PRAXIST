@@ -1,0 +1,27 @@
+This is the Top-K Algorithm Optimization task.
+
+Read `description.md` and `workspace/solution.py` before changing anything.
+Run the public evaluator first to establish the current score:
+
+```bash
+python evaluations/run.py --output-dir experiments/manual
+```
+
+Then improve `workspace/solution.py` while preserving the exact correctness
+contract. Only that file is writable. `evaluations/`, `assets/`, `task.yaml`,
+and everything outside `workspace/` are out of bounds.
+
+Useful directions include a bounded heap, selection, or a hybrid that is faster
+than the baseline on the fixed workload. Do not change the evaluator, tests, or
+baseline. Re-run the evaluator after every change.
+
+Publish a structured finding with:
+
+- `deterministic_score` (maximize);
+- `correctness_rate`;
+- `speedup`;
+- the evaluator summary path;
+- the mechanism used and any caveats.
+
+Keep negative or partial evidence visible; do not claim a gain that the
+evaluator did not measure.

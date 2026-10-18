@@ -70,6 +70,9 @@ which roots are mounted read-only for the candidate.
   no score was produced.
 - [`PHASE0_REPAIR.md`](PHASE0_REPAIR.md) — the approved task-level repair:
   LF normalization, hash alignment, and the one-unit canary result.
+- [`PHASE0_TOPK.md`](PHASE0_TOPK.md) — the lightweight two-generation engine
+  test with a real top-k optimization task: baseline 1.0 → gen0 16.64 → gen1
+  17.30.
 - [`ownership_boundary.yaml`](ownership_boundary.yaml) — machine-readable
   design contract for writable and read-only roots.
 - [`promotion_record.schema.json`](promotion_record.schema.json) — append-only
