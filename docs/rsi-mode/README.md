@@ -65,6 +65,9 @@ which roots are mounted read-only for the candidate.
   evaluation contract, promotion loop, safety rules, and phased plan.
 - [`PHASE0.md`](PHASE0.md) — plan for validating PRAXIST's ordinary
   multi-generation optimization before building RSI mode.
+- [`PHASE0_STATUS.md`](PHASE0_STATUS.md) — what happened when the plan was
+  tried on the PC example: a frozen-asset hash mismatch blocked the canary, so
+  no score was produced.
 - [`ownership_boundary.yaml`](ownership_boundary.yaml) — machine-readable
   design contract for writable and read-only roots.
 - [`promotion_record.schema.json`](promotion_record.schema.json) — append-only
