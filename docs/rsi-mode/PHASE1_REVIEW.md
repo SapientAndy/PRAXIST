@@ -15,6 +15,18 @@ than the current 23-case sealed evaluator.
 - sealed correctness: 23/23
 - status: proposed
 
+## Safe tradeoff — `gen1_peer1_span_slice`
+
+- sealed score: 5.209935
+- sealed correctness: 23/23
+- external differential fuzz: **0 output mismatches, 0 hit mismatches in 1,200 cases**
+- status: proposed; recommended for human approval as the safer parent
+
+This candidate is slower than the rejected 12.13x candidate, but it preserves
+the full redaction behavior on the cross-line and duplicate-secret cases that
+the fast candidate fails. It is the candidate the promotion gate should prefer
+until the sealed evaluator is hardened.
+
 ## Differential audit
 
 A separate external fuzz check compared the gen-1 candidate against the pristine

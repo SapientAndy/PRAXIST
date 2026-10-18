@@ -78,17 +78,29 @@ rather than an impossible target.
 
 ## Results
 
-The guided run produced a monotonic, sealed, end-to-end score curve on one
-PRAXIST subsystem:
+The guided run produced a sealed, end-to-end score curve on one PRAXIST
+subsystem:
 
-| Generation | Candidate | Correctness | Median ms | `deterministic_score` |
-|---|---|---|---:|---:|
-| baseline | pristine `redaction.py` | 23/23 | 100.9227 | 1.0000 |
-| gen 0 | `gen0_peer1_lineprefilter_v2` | 23/23 | 14.4184 | **6.9996** |
-| gen 1 | `gen1_peer0_marker_dispatch_v2` | 23/23 | 8.3183 | **12.1326** |
+| Generation | Candidate | Correctness | Median ms | `deterministic_score` | External fuzz |
+|---|---|---|---:|---:|---|
+| baseline | pristine `redaction.py` | 23/23 | 100.9227 | 1.0000 | — |
+| gen 0 | `gen0_peer1_lineprefilter_v2` | 23/23 | 14.4184 | **6.9996** | not exact |
+| gen 1 fast | `gen1_peer0_marker_dispatch_v2` | 23/23 | 8.3183 | **12.1326** | 119/1,200 output mismatches |
+| gen 1 safe | `gen1_peer1_span_slice` | 23/23 | 19.3712 | **5.2099** | **0/1,200 mismatches** |
+| gen 2 fast | `gen2_peer1_markerdispatch_v3` | 23/23 | 6.4729 | **15.5916** | 36/1,200 output mismatches |
 
-Both candidates were scored by the sealed evaluator after the evaluator copied
-the candidate into a temporary directory. The sealed golden cases and
+The fastest candidate is not the safest candidate. `span_slice` is slower than
+the 12.13x and 15.59x candidates but preserves the full redaction behavior on
+the external cross-line and duplicate-secret fuzz cases. It is the candidate
+recommended for the human gate until the sealed evaluator is hardened.
+
+The gen-2 candidate also showed high run-to-run benchmark variance: the same
+candidate was scored at 8.51x, 11.53x, and 15.59x on different evaluator runs.
+That variance is itself a reason not to treat the top number as a stable
+capability claim.
+
+All scored candidates were evaluated after the evaluator copied the candidate
+into a temporary directory. The sealed golden cases and
 `assets/protected_manifest.json` remained unchanged; `rsi_mode/verify.py`
 returned `ok: true` after the runs.
 
@@ -139,20 +151,25 @@ includes cross-line and differential cases.
 
 ### Promotion state
 
-Two append-only records are currently `proposed`, not approved:
+Three append-only records are currently `proposed`, not approved:
 
 - gen 0: `6.999577`, candidate SHA-256 `be907da19013...`
-- gen 1: `12.132611`, candidate SHA-256 `54367dc52441...`
+- gen 1 fast: `12.132611`, candidate SHA-256 `54367dc52441...` — **fails the
+  external cross-line audit; reject**
+- gen 1 safe: `5.209935`, candidate SHA-256 `e085ecb755bf...` — **recommended
+  for human approval**; 1,200/1,200 external fuzz cases exact
 
-A human approval is still required before either becomes the parent of a
+A human approval is still required before any becomes the parent of a
 production branch. The records and the score curve are in `promotions/`.
 
 ### What the curve means
 
 This is **subsystem-level self-improvement**: the research loop improved a real
-PRAXIST module across generations, under a sealed evaluator, with a monotonic
-score and preserved correctness. It is the first measured capability curve in
-this prototype.
+PRAXIST module across generations under a sealed evaluator, and preserved
+correctness on the sealed cases. The raw score curve for the fast candidates was
+1.0 → 6.9996 → 12.1326. The external audit then rejected the fastest candidate
+and selected the slower `span_slice` (5.2099) as the safer proposed parent. That
+is the RSI safety loop working: speed alone does not win.
 
 It is **not full PRAXIST RSI**. The object is one module, not the kernel; the
 objective and metric are human-set; the benchmark is synthetic and
