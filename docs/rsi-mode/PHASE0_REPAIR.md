@@ -94,21 +94,91 @@ proves the evaluator can now load the frozen boundary and execute a rollout on
 CPU. It says nothing about the controller's quality, because one unit cannot
 support a landing-success estimate.
 
+## Complete baseline measurement
+
+After the canary, the baseline controller was measured on the complete protocol:
+
+```text
+stage: complete
+actual_evaluation_units: 13,312
+complete_eval: true
+landing_success_rate: 0.040283203125
+first_contact_sink_speed_p95_mps: 66.39284057617188
+elapsed_seconds: 21.04
+jax_backend: cpu
+```
+
+The development protocol (2,048 units) measured
+`landing_success_rate = 0.02783203125` in 4.97 s. The complete baseline is the
+number now declared in `task_PC/task.yaml:baselines` as
+`pc_cpu_complete_v1`, and `praxist resolve` no longer warns about an empty
+baseline contract.
+
+These are **local task-level measurements** on a CPU-only WSL host, not an
+upstream-certified PC or GPU result. They are adequate for a bounded engine
+smoke test; they are not a platform qualification.
+
+## PRAXIST engine smoke (2 peers / 2 generations)
+
+A bounded engine smoke was launched after the baseline measurement:
+
+```text
+task:        task_PC_smoke (copy of task_PC)
+model:       deepseek-flash
+peers:       2
+generations: 2
+DIG:         disabled
+QD:          disabled
+gen cap:     10 minutes (synthesis max interval)
+```
+
+It was stopped after about 17 minutes while still in generation 0. The state at
+stop:
+
+```text
+current_generation:      0
+generations_completed:   0
+variants_total:          2
+findings_total:          2
+variants_above_baseline: 0
+best_validation_signal:  landing_success_rate = 0.027832 (development, below baseline)
+```
+
+Both variants were baseline reference artifacts. The evaluator results were a
+one-unit canary (1 / 13,312) and a development run (2,048 / 13,312); neither was
+a complete-protocol result. The PI skeptic explicitly recorded that no validated
+landing claim existed because both artifacts were incomplete.
+
+This is a **negative/mechanical result**, not a capability result:
+
+- PRAXIST started, ran the task evaluator, produced findings, and entered PI
+  synthesis;
+- with 2 peers and a 10-minute generation, it did not produce a complete
+  candidate or an above-baseline variant;
+- the generation did not close before the run was stopped;
+- the result does not show that PRAXIST cannot optimize this task; it shows that
+  this budget and cohort were too small for this task.
+
 ## What this repair does not do
 
 - It does not change the scientific protocol or metric definition.
 - It does not make the task upstream-canonical; it is a local task-level repair.
-- It does not produce a baseline; the complete protocol is 13,312 units.
+- It does not produce a platform-qualified PC/GPU baseline; the CPU measurement
+  is local evidence, not a hardware certification.
 - It does not justify calling anything RSI.
 
 ## Next
 
+The local complete baseline is measured (13,312 units, 21 s, CPU), but the
+2-peer / 10-minute engine smoke was too small for this task: it produced only
+incomplete baseline references and no above-baseline variant.
+
 Choose one:
 
-1. Run `development` (2,048 units) on CPU for a bounded baseline candidate; at
-   roughly the canary's per-unit cost this is a multi-hour run and must be
-   budgeted, not assumed.
-2. Run the complete protocol on a GPU host; the example's intended PC/GPU
-   qualification path expects a proper baseline measurement.
-3. Use a lighter standard task to validate PRAXIST's multi-generation engine
-   before spending hours on the rocket baseline.
+1. Use a genuinely smaller standard task to validate PRAXIST's multi-generation
+   loop before returning to rocket.
+2. Run rocket with its intended cohort and generation budget (the task defaults
+   are 16 peers / 30 generations; a serious run needs a GPU host and a real
+   budget).
+3. Keep the rocket task only as the benchmark asset; do not use a 2-peer smoke
+   to judge its capability or PRAXIST's optimization ceiling.
