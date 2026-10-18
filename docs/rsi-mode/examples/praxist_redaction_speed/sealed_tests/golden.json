@@ -1,0 +1,280 @@
+{
+  "schema_version": 1,
+  "generated_from": "workspace/redaction.py",
+  "note": "Golden outputs are frozen from the pristine PRAXIST redaction module. The candidate must match them exactly on these cases.",
+  "cases": [
+    {
+      "name": "text_bearer",
+      "kind": "text",
+      "input": "Authorization: Bearer abcdefghijklmnop123456",
+      "expected": "Authorization: <redacted:bearer_token>",
+      "hits": [
+        "bearer_token"
+      ]
+    },
+    {
+      "name": "text_openai",
+      "kind": "text",
+      "input": "token=sk-abc1234567890XYZ",
+      "expected": "token=<redacted:openai_style_key>",
+      "hits": [
+        "openai_style_key"
+      ]
+    },
+    {
+      "name": "text_github",
+      "kind": "text",
+      "input": "ghp_abcdefghijklmnopqrstuvwxyz0123456789",
+      "expected": "<redacted:github_token>",
+      "hits": [
+        "github_token"
+      ]
+    },
+    {
+      "name": "text_named",
+      "kind": "text",
+      "input": "api_key=supersecretvalue",
+      "expected": "<redacted:named_secret>",
+      "hits": [
+        "named_secret"
+      ]
+    },
+    {
+      "name": "text_password",
+      "kind": "text",
+      "input": "password: hunter2xyz",
+      "expected": "<redacted:named_secret>",
+      "hits": [
+        "named_secret"
+      ]
+    },
+    {
+      "name": "text_mixed",
+      "kind": "text",
+      "input": "Bearer abcdefghijklmnop123456 and sk-abc1234567890XYZ and ghp_abcdefghijklmnopqrstuvwxyz0123456789",
+      "expected": "<redacted:bearer_token> and <redacted:openai_style_key> and <redacted:github_token>",
+      "hits": [
+        "bearer_token",
+        "github_token",
+        "openai_style_key"
+      ]
+    },
+    {
+      "name": "text_clean",
+      "kind": "text",
+      "input": "the quick brown fox jumps over the lazy dog",
+      "expected": "the quick brown fox jumps over the lazy dog",
+      "hits": []
+    },
+    {
+      "name": "text_empty",
+      "kind": "text",
+      "input": "",
+      "expected": "",
+      "hits": []
+    },
+    {
+      "name": "text_unicode",
+      "kind": "text",
+      "input": "配置：模型名称 = 万格智能；没有密钥。",
+      "expected": "配置：模型名称 = 万格智能；没有密钥。",
+      "hits": []
+    },
+    {
+      "name": "text_false_positive",
+      "kind": "text",
+      "input": "Bearer short and sk-short",
+      "expected": "Bearer short and sk-short",
+      "hits": []
+    },
+    {
+      "name": "json_nested_secret",
+      "kind": "json",
+      "input": {
+        "api_key": "supersecretvalue",
+        "nested": {
+          "password": "hunter2xyz",
+          "safe": "hello"
+        },
+        "items": [
+          {
+            "secret": "anothervalue"
+          },
+          "plain"
+        ]
+      },
+      "expected": {
+        "api_key": "<redacted:named_secret>",
+        "nested": {
+          "password": "<redacted:named_secret>",
+          "safe": "hello"
+        },
+        "items": [
+          {
+            "secret": "<redacted:named_secret>"
+          },
+          "plain"
+        ]
+      },
+      "hits": [
+        "named_secret",
+        "named_secret",
+        "named_secret"
+      ]
+    },
+    {
+      "name": "dumps_nested_secret",
+      "kind": "dumps",
+      "input": {
+        "api_key": "supersecretvalue",
+        "nested": {
+          "password": "hunter2xyz",
+          "safe": "hello"
+        },
+        "items": [
+          {
+            "secret": "anothervalue"
+          },
+          "plain"
+        ]
+      },
+      "expected": "{\"api_key\": \"<redacted:named_secret>\", \"items\": [{\"secret\": \"<redacted:named_secret>\"}, \"plain\"], \"nested\": {\"password\": \"<redacted:named_secret>\", \"safe\": \"hello\"}}"
+    },
+    {
+      "name": "json_json_clean",
+      "kind": "json",
+      "input": {
+        "name": "demo",
+        "values": [
+          1,
+          2,
+          3
+        ],
+        "nested": {
+          "ok": true
+        }
+      },
+      "expected": {
+        "name": "demo",
+        "values": [
+          1,
+          2,
+          3
+        ],
+        "nested": {
+          "ok": true
+        }
+      },
+      "hits": []
+    },
+    {
+      "name": "dumps_json_clean",
+      "kind": "dumps",
+      "input": {
+        "name": "demo",
+        "values": [
+          1,
+          2,
+          3
+        ],
+        "nested": {
+          "ok": true
+        }
+      },
+      "expected": "{\"name\": \"demo\", \"nested\": {\"ok\": true}, \"values\": [1, 2, 3]}"
+    },
+    {
+      "name": "json_json_mixed",
+      "kind": "json",
+      "input": {
+        "auth_token": "abcdefghijklmnop",
+        "note": "Bearer abcdefghijklmnop123456",
+        "list": [
+          "sk-abc1234567890XYZ"
+        ]
+      },
+      "expected": {
+        "auth_token": "<redacted:named_secret>",
+        "note": "<redacted:bearer_token>",
+        "list": [
+          "<redacted:openai_style_key>"
+        ]
+      },
+      "hits": [
+        "bearer_token",
+        "named_secret",
+        "openai_style_key"
+      ]
+    },
+    {
+      "name": "dumps_json_mixed",
+      "kind": "dumps",
+      "input": {
+        "auth_token": "abcdefghijklmnop",
+        "note": "Bearer abcdefghijklmnop123456",
+        "list": [
+          "sk-abc1234567890XYZ"
+        ]
+      },
+      "expected": "{\"auth_token\": \"<redacted:named_secret>\", \"list\": [\"<redacted:openai_style_key>\"], \"note\": \"<redacted:bearer_token>\"}"
+    },
+    {
+      "name": "scan_bearer",
+      "kind": "scan",
+      "input": "Authorization: Bearer abcdefghijklmnop123456",
+      "expected": [
+        "bearer_token"
+      ]
+    },
+    {
+      "name": "scan_openai",
+      "kind": "scan",
+      "input": "token=sk-abc1234567890XYZ",
+      "expected": [
+        "openai_style_key"
+      ]
+    },
+    {
+      "name": "scan_github",
+      "kind": "scan",
+      "input": "ghp_abcdefghijklmnopqrstuvwxyz0123456789",
+      "expected": [
+        "github_token"
+      ]
+    },
+    {
+      "name": "scan_named",
+      "kind": "scan",
+      "input": "api_key=supersecretvalue",
+      "expected": [
+        "named_secret",
+        "named_secret"
+      ]
+    },
+    {
+      "name": "scan_password",
+      "kind": "scan",
+      "input": "password: hunter2xyz",
+      "expected": [
+        "named_secret",
+        "named_secret"
+      ]
+    },
+    {
+      "name": "scan_mixed",
+      "kind": "scan",
+      "input": "Bearer abcdefghijklmnop123456 and sk-abc1234567890XYZ and ghp_abcdefghijklmnopqrstuvwxyz0123456789",
+      "expected": [
+        "bearer_token",
+        "github_token",
+        "openai_style_key"
+      ]
+    },
+    {
+      "name": "scan_clean",
+      "kind": "scan",
+      "input": "the quick brown fox jumps over the lazy dog",
+      "expected": []
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "source": "workspace/redaction.py (pristine praxist/core/redaction.py)",
+  "baseline_median_ms": 100.9227,
+  "baseline_correctness_rate": 1.0,
+  "benchmark_chars": 945159,
+  "measurement": "median of 3 runs after one warmup; CPU-only; baseline anchored to the evaluator run so a baseline-equal candidate scores 1.0"
+}

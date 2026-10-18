@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "task_id": "praxist_redaction_speed",
+  "primary_metric": "deterministic_score",
+  "direction": "maximize",
+  "metrics": {
+    "deterministic_score": 1.00395,
+    "correctness_rate": 1.0,
+    "speedup": 1.00395,
+    "candidate_median_ms": 100.5256,
+    "baseline_median_ms": 100.9227,
+    "benchmark_chars": 945159
+  },
+  "passed": 23,
+  "failed": 0,
+  "total": 23,
+  "complete": true,
+  "evidence_stage": "complete",
+  "evidence_source": "sealed_tests",
+  "evaluator": "evaluations/run.py",
+  "failures": [],
+  "candidate_sha256": "afbe7ad9991bf5360821295918a09a2c78d02d0a5c53763ee5d2d13bdf8e9191",
+  "candidate_bytes": 3434
+}
