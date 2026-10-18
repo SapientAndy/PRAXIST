@@ -87,6 +87,9 @@ which roots are mounted read-only for the candidate.
 - [`PHASE1D_REDACTION_V4.md`](PHASE1D_REDACTION_V4.md) — continuation from the
   v3 gateskip winner: 29/29, 2.87 ms → 1.75 ms, 1.6456 relative, external fuzz
   0/1,200.
+- [`PHASE1E_REDACTION_V5.md`](PHASE1E_REDACTION_V5.md) — continuation from the
+  v4 spanmerge winner: 29/29, 1.75 ms → 1.40 ms, 1.2498 relative, external fuzz
+  0/1,200.
 - `../../rsi_mode/` — executable promotion recorder and score-curve renderer.
   The recorder refuses correctness failures, duplicate candidates, and approved
   scores that do not improve on the best approved score; approval is explicit.
