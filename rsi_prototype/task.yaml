@@ -1,0 +1,183 @@
+schema_version: 1
+task_version: 0.1.0
+task_id: praxist_self_repair
+task_name: "PRAXIST Self-Repair under Sealed Tests"
+description_file: description.md
+
+capabilities:
+  - task.self_repair
+  - task.code_repair
+  - task.sealed_evaluation
+
+research_direction: |
+  Repair four deterministic regressions in the candidate copy at
+  `workspace/praxist/` so that the sealed test suite returns to its clean
+  baseline.
+
+  Allowed changes: files under `workspace/praxist/**` only.
+
+  Forbidden changes: `sealed_tests/**`, `evaluations/**`, `task.yaml`,
+  `assets/**`, and anything outside `workspace/`. The sealed tests are the
+  authoritative scorer; editing them, deleting tests, or changing the
+  evaluator is a protocol violation and receives no credit.
+
+  The clean baseline is 54/55 (the 55th failure is a known
+  `agent_runtime:fake_runtime` plugin-discovery issue and is out of scope).
+  The degraded starting state is 50/55. The target is 54/55.
+
+  A valid candidate must:
+  1. keep the candidate package importable;
+  2. restore the four regressed semantic contracts;
+  3. not weaken or skip any sealed test;
+  4. not add network access, credentials, or external dependencies.
+
+  Do not modify Praxist core outside the candidate copy. Do not write into
+  `sealed_tests/` or `evaluations/`.
+
+prompt_layout:
+  task_template: prompt_task.jinja2
+
+evaluation:
+  primary_metric: pass_rate
+  direction: maximize
+  aux_metrics:
+    - passed
+    - failed
+  seeds: [1]
+  aggregation: mean
+  maturity_policy:
+    min_effort_ratio: 0.5
+    min_coverage_ratio: 0.5
+    require_ratio_gate: false
+    complete_stage_labels: [complete]
+    preliminary_stage_labels: [preliminary, partial]
+  constructive_peer_mix_enabled: false
+  constructive_target_ratio: 0.5
+  launch_guard:
+    enabled: true
+    estimated_heavy_eval_minutes: 0.1
+    estimated_close_grade_eval_minutes: 0.1
+    safety_factor: 1.5
+  diversity_dimensions:
+    - name: mechanism_family
+      description: "Repair strategy: direct contract restoration, test-guided diagnosis, ablation, or defensive compatibility."
+    - name: intervention_surface
+      description: "Which candidate module is changed."
+    - name: intent
+      description: "Repair, diagnose, falsify, or control."
+    - name: semantic_family
+      description: "The semantic contract being restored."
+    - name: parent_lineage
+      description: "Degraded baseline, prior candidate, or independent lineage."
+    - name: novelty_axis
+      description: "What makes the repair meaningfully different."
+  frontier_lanes:
+    - name: confirmed
+      description: "Candidates that pass the sealed suite at or above the clean baseline."
+      k: 2
+      cumulative_cap: 6
+      axes:
+        - {name: pass_rate, direction: maximize}
+      include_lanes: [confirmed, performance]
+      require_metrics: [pass_rate]
+      parent_eligible: true
+      allow_missing_tier: true
+    - name: diagnostic
+      description: "Partial repairs and negative evidence retained for review."
+      k: 3
+      cumulative_cap: 12
+      axes:
+        - {name: pass_rate, direction: maximize}
+      include_lanes: [diagnostic, candidate, task_candidate]
+      require_metrics: [pass_rate]
+      parent_eligible: false
+      allow_lower_tier: true
+      allow_non_promotable: true
+      allow_missing_tier: true
+
+compute_budget:
+  per_experiment_gpu_hours: 0
+  max_parallel_runs_per_peer: 1
+  resource_scheduler:
+    mode: central
+    initial_concurrent_experiments: 1
+    min_concurrent_experiments: 1
+    max_concurrent_experiments: 1
+    supply_signal_enabled: false
+    default_profile: default
+    profiles:
+      default:
+        accelerator: cpu
+        pressure_domains: [cpu, memory]
+
+task_entrypoints:
+  evaluation:
+    command: evaluations/run.py
+    output_policy: "Accept --output-dir, write evaluation_summary.json there, and keep raw logs out of Praxist core."
+    purpose: "Only public scoring entrypoint for the candidate PRAXIST copy."
+
+runtime_outputs:
+  root: experiments
+  gitignored: true
+  policy: "All run outputs, candidate copies, and evaluation logs stay under this task-owned directory."
+
+runtime_environment:
+  cwd: task_project
+  python: python3
+  protected_child_paths:
+    - assets
+    - evaluations
+    - sealed_tests
+  writable_roots:
+    - workspace
+
+baselines:
+  - name: degraded_v1
+    metric_name: pass_rate
+    metric_value: 0.909091
+    direction: maximize
+
+generation_policy:
+  max_generations: 1
+  cohort_size: 2
+  per_generation_hours: 2
+  promote_top_k: 1
+  promote_criterion: primary_metric
+
+synthesis_trigger:
+  enabled: true
+  min_findings: 1
+  min_interval_minutes: 1
+  max_interval_minutes: 60
+  min_contributing_peers: 1
+  mature_quorum_fraction: 0.5
+
+agent:
+  premium_mode: false
+  reasoning_effort: max
+
+praxist_plugins:
+  task_ref: task:praxist_self_repair
+  workflow:
+    stage: workflow_stage:research_loop
+  panel:
+    topology: panel_topology:legacy_multi_pi_two_round
+    roles:
+      - task_role:builder_pi
+      - task_role:skeptic_pi
+      - task_role:portfolio_pi
+      - task_role:external_validity_pi
+      - task_role:chair
+  audit_rules: []
+  evaluations: []
+  tools:
+    - tool_server:evaluation_tools
+    - tool_server:frontier_tools
+    - tool_server:finding_graph_query
+    - tool_server:memory_tools
+    - tool_server:run_report
+  graph_maintainers: []
+  optional_workflow_stages:
+    ideation: workflow_stage:ideation_stub
+    paper_writing: workflow_stage:paper_writing_stub
+    reviewer: workflow_stage:reviewer_stub

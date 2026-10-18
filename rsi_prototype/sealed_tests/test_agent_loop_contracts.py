@@ -17,7 +17,7 @@ class AgentLoopContractsTest(unittest.TestCase):
         from praxist import task_spec
         from praxist.core.runtimes import effective_reasoning_effort
 
-        path = Path(__file__).resolve().parents[2] / "templates/tasks/toy_math/task.yaml"
+        path = Path(__file__).resolve().parents[1] / "sealed_tests/fixtures/toy_math/task.yaml"
         raw = task_spec.yaml.safe_load(path.read_text(encoding="utf-8"))
         raw["agent"] = {"premium_mode": True, "reasoning_effort": "HIGH"}
         with patch.object(task_spec.yaml, "safe_load", return_value=raw):

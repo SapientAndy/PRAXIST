@@ -1,0 +1,32 @@
+## Task
+
+**{{ task_spec.task_name }}**
+
+{{ task_spec.research_direction }}
+
+## What you can change
+
+Only `workspace/praxist/**`. The candidate is a copy of the PRAXIST package;
+treat it as the system under repair.
+
+## What you must not change
+
+`sealed_tests/**`, `evaluations/**`, `task.yaml`, `assets/**`, or anything
+outside `workspace/`. Do not delete, skip, weaken, or rewrite a sealed test.
+Do not change the evaluator. A score obtained by touching the scorer is invalid.
+
+## How to work
+
+1. Run `python evaluations/run.py` and read the failing test names.
+2. Open the relevant candidate module under `workspace/praxist/`.
+3. Diagnose the semantic regression; do not pattern-match the assertion alone.
+4. Make the smallest correct change that restores the contract.
+5. Re-run the evaluator. The clean baseline is 54/55; the 55th failure is a
+   known plugin-discovery issue and is out of scope.
+6. Report the score, the failing tests you fixed, and the files you changed.
+
+## Evidence
+
+Publish a structured finding with `pass_rate` (maximize), `passed`, `failed`,
+the evaluator output path, and a short diagnosis. Keep partial attempts and
+negative evidence visible; do not present a partial repair as complete.
