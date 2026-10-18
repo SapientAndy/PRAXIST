@@ -1,8 +1,13 @@
-# Phase 0 Status — Canary Blocked by Example Hash Mismatch
+# Phase 0 Status — Canary Unblocked After Task-Level Repair
 
 **Date:** 2026-10-18  
 **Host:** WSL Ubuntu, Python 3.12, CPU-only (`jax.devices() == [CpuDevice(id=0)]`)  
-**Claim:** no score, no capability result, no RSI claim.
+**Claim:** no baseline score, no capability result, no RSI claim.
+
+> **Update:** with explicit operator approval, the task-level hash repair
+> described in [`PHASE0_REPAIR.md`](PHASE0_REPAIR.md) was applied. All 15 frozen
+> assets now match, and the one-unit canary completes on CPU. The canary is
+> still not a baseline or a capability result.
 
 ## What was done
 
@@ -44,10 +49,10 @@
      --batch-size 1024
    ```
 
-## Result
+## Result before repair
 
-The canary did **not** produce a controller score. It stopped at the evaluator's
-frozen-asset integrity gate:
+The first canary did **not** produce a controller score. It stopped at the
+evaluator's frozen-asset integrity gate:
 
 ```text
 status: protocol_failed
@@ -56,35 +61,68 @@ expected 63f543e2125b367cf7672360984167f0c99c83362e4259bbcb301a8e0650101f,
 got     42f8b1a031f33a4cf7f419ae0dc04fd26a7fda5a41a13270ef7bde8c3966aa20
 ```
 
-The installed file has CRLF line endings. Its LF-normalized SHA-256 is
+The installed file had CRLF line endings. Its LF-normalized SHA-256 was
 `b6a68c67bfb87ebc708747fe708fc8ae80a00242c2225e1fe3ada1600bf8cd62`, which is
 exactly the value in the example's `SHA256SUMS` and in
 `task_PC/assets/task_assets_manifest.json`. The evaluator's hard-coded
-`FROZEN_HASHES` entry expects a third value, `63f5...`, which does not match
+`FROZEN_HASHES` entry expected a third value, `63f5...`, which did not match
 either the CRLF or LF form of the installed asset.
 
 A full comparison of the evaluator's 15 frozen entries against the installed
-files found only this one mismatch. The other 14 entries match their
-LF-normalized files. That points to a stale hash entry for
+files found only this one hash mismatch. The other 14 entries matched their
+LF-normalized files. That pointed to a stale hash entry for
 `src/plant_adapter.py`, not a broad asset-corruption problem.
 
-This is a **task-packaging inconsistency**, not a controller failure and not a
-PRAXIST orchestration failure. The frozen evaluator is doing its job by
-refusing to score a candidate whose immutable boundary does not match its own
+This was a **task-packaging inconsistency**, not a controller failure and not a
+PRAXIST orchestration failure. The frozen evaluator was doing its job by
+refusing to score a candidate whose immutable boundary did not match its own
 attestation.
+
+## Repair applied
+
+With explicit operator approval, the task-level repair in
+[`PHASE0_REPAIR.md`](PHASE0_REPAIR.md) was applied:
+
+- backed up the original `plant_adapter.py`, evaluator, and frozen vendor tree;
+- normalized all 15 frozen assets to LF line endings;
+- changed the evaluator's `FROZEN_HASHES` entry for `src/plant_adapter.py` from
+  `63f5...` to the manifest value `b6a6...`;
+- did not change the controller, plant behaviour, metrics, baseline values, or
+  evaluator logic.
+
+All 15 frozen entries now match their files exactly.
+
+## Canary result after repair
+
+```text
+result_status: canary
+actual_evaluation_units: 1
+required: 13312
+complete_eval: false
+landing_success_rate: 0.0
+first_contact_sink_speed_p95_mps: 41.868
+elapsed_seconds: 3.844
+jax_backend: cpu
+```
+
+This is a **one-unit canary**, not a baseline and not a capability result. It
+shows that the evaluator can now load the frozen boundary and execute a rollout
+on CPU. It does not support a landing-success estimate, because one unit cannot
+estimate a rate.
 
 ## Decision
 
-Do **not** patch the frozen evaluator hash to force the canary to pass. That
-would turn a protocol failure into a false green and would contaminate Phase 0.
-The example must first be made internally consistent:
+The task example is locally repaired and usable for a bounded Phase 0 run, but
+it remains a **task-level repair**, not an upstream-canonical example. Before a
+multi-generation Phase 0 run, choose a budget:
 
-- either ship the `src/plant_adapter.py` whose SHA-256 is `63f5...`, with a
-  matching manifest and baseline record;
-- or update the evaluator's `FROZEN_HASHES` to the manifest's `b6a6...` value
-  and re-attest the full frozen boundary;
-- then re-run `resolve`, the canary, and only after that the baseline and
-  multi-generation run.
+- `development` = 2,048 units; on CPU this is a multi-hour run;
+- `complete` = 13,312 units; on CPU this is not practical without a long
+  unattended window;
+- a GPU host is the intended path for the complete protocol.
+
+Do not treat the canary's `landing_success_rate: 0.0` as a baseline. It is one
+unit.
 
 ## What this does not tell us
 

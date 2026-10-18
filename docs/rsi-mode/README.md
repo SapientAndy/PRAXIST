@@ -68,6 +68,8 @@ which roots are mounted read-only for the candidate.
 - [`PHASE0_STATUS.md`](PHASE0_STATUS.md) — what happened when the plan was
   tried on the PC example: a frozen-asset hash mismatch blocked the canary, so
   no score was produced.
+- [`PHASE0_REPAIR.md`](PHASE0_REPAIR.md) — the approved task-level repair:
+  LF normalization, hash alignment, and the one-unit canary result.
 - [`ownership_boundary.yaml`](ownership_boundary.yaml) — machine-readable
   design contract for writable and read-only roots.
 - [`promotion_record.schema.json`](promotion_record.schema.json) — append-only
