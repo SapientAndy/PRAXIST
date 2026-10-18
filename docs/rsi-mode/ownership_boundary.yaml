@@ -1,0 +1,112 @@
+# Design contract for PRAXIST-RSI mode.
+# This file is declarative; the kernel, not the candidate, enforces it.
+version: 1
+mode: rsi
+principle: >-
+  A candidate may own a copy of the system source. It may not own the kernel,
+  the evaluator, or the promotion record.
+
+roots:
+  kernel:
+    path: kernel
+    access: read_only
+    owner: trusted_operator
+    description: Frozen orchestration, sandbox, lifecycle, and audit code.
+  candidate:
+    path: candidate
+    access: read_write
+    owner: candidate
+    description: The only tree peers may edit.
+  evaluator:
+    path: evaluator
+    access: read_only
+    owner: independent_evaluator_owner
+    description: Sealed tests, fixtures, scorer, and held-out data.
+  promotions:
+    path: promotions
+    access: append_only
+    owner: promotion_gate
+    description: Version records and approval decisions.
+  runs:
+    path: runs
+    access: append_only
+    owner: kernel
+    description: Immutable run artifacts, logs, and lineage.
+  policies:
+    path: policies
+    access: read_only
+    owner: operator
+    description: Resource, network, and safety limits.
+
+candidate:
+  writable_roots:
+    - candidate
+  forbidden_roots:
+    - kernel
+    - evaluator
+    - promotions
+    - runs
+    - policies
+    - .git
+  allowed_changes:
+    - source code inside candidate/
+    - prompts and role text inside candidate/
+    - memory and orchestration policy inside candidate/
+    - candidate-local tests that are not used as the score
+  forbidden_changes:
+    - evaluator tests or scorer
+    - baseline declarations or provenance
+    - promotion records or approvals
+    - kernel lifecycle or sandbox code
+    - network, credential, or dependency allowlist policy
+
+evaluation:
+  public_command: evaluator/run.py
+  candidate_root: candidate
+  copy_candidate_to_temp: true
+  evaluator_process_must_not_import_candidate: true
+  sealed_tests_must_be_outside_candidate: true
+  check_test_manifest_before_and_after: true
+  reject_skipped_or_deleted_tests: true
+  held_out_tests_for_promotion: true
+  emit_structured_summary: true
+  summary_fields:
+    - candidate_version
+    - metric_name
+    - metric_value
+    - metric_direction
+    - baseline_value
+    - parent_value
+    - protocol_pass
+    - evidence_stage
+    - evaluator_manifest_sha256
+
+promotion:
+  append_only: true
+  record_schema: promotion_record.schema.json
+  required_checks:
+    - protocol_pass
+    - score_improvement
+    - guardrails_pass
+    - diff_reviewed
+    - independent_approval
+  decisions:
+    - promote
+    - reject
+    - hold
+  rollback:
+    enabled: true
+    strategy: tagged_candidate_version
+    keep_failed_candidates: true
+
+safety:
+  network: off
+  credentials: none
+  candidate_may_install_dependencies: false
+  resource_limits:
+    cpu_seconds: required
+    memory_bytes: required
+    wall_clock_seconds: required
+  kill_switch: required
+  audit_log: required
+  human_promotion_gate: required
