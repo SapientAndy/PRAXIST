@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "task_id": "praxist_redaction_speed",
+  "primary_metric": "deterministic_score",
+  "direction": "maximize",
+  "metrics": {
+    "deterministic_score": 6.149136,
+    "correctness_rate": 1.0,
+    "speedup": 6.149136,
+    "candidate_median_ms": 16.4125,
+    "baseline_median_ms": 100.9227,
+    "benchmark_chars": 945159
+  },
+  "passed": 23,
+  "failed": 0,
+  "total": 23,
+  "complete": true,
+  "evidence_stage": "complete",
+  "evidence_source": "sealed_tests",
+  "evaluator": "evaluations/run.py",
+  "failures": [],
+  "candidate_sha256": "d8102ee53f43a93b38a55c2923f22932480249ddaf9753d3b5ca7ae81b2c01d1",
+  "candidate_bytes": 7765,
+  "candidate_path": "/home/andyl/PraxistExamples/praxist_redaction_speed/experiments/run_redaction_guided_1/variants/gen0_peer1_lineprefilter/redaction.py"
+}

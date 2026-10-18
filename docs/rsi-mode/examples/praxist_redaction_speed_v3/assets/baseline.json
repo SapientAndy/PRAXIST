@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "source": "workspace/redaction.py (gen1_peer1_gated safe parent, hardened 29-case evaluator)",
+  "baseline_median_ms": 4.4892,
+  "baseline_correctness_rate": 1.0,
+  "benchmark_chars": 945159,
+  "measurement": "median from v2 gen1 sealed evaluation; parent is safely gated"
+}

@@ -81,6 +81,9 @@ which roots are mounted read-only for the candidate.
 - [`PHASE1B_REDACTION_V2.md`](PHASE1B_REDACTION_V2.md) — continuation from the
   safe `span_slice` parent: 29/29, 14.90 ms → 4.49 ms, 3.3190 relative, external
   fuzz 0/1,200.
+- [`PHASE1C_REDACTION_V3.md`](PHASE1C_REDACTION_V3.md) — continuation from the
+  gated v2 winner: 29/29, 4.49 ms → 2.87 ms, 1.5630 relative, external fuzz
+  0/1,200.
 - `../../rsi_mode/` — executable promotion recorder and score-curve renderer.
   The recorder refuses correctness failures, duplicate candidates, and approved
   scores that do not improve on the best approved score; approval is explicit.

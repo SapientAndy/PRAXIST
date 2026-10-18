@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "task_id": "praxist_redaction_speed_v3",
+  "policy": "candidate may edit workspace only; these files are frozen",
+  "files": {
+    "evaluations/run.py": "40841f1eb0487fb3fb8f0046f47d4262c9b785485f4eba835a80e4dda7a7ec8e",
+    "sealed_tests/check.py": "d8e78577dbf1a7d5c4e91c5ff02adc962f192958ee10c06755cc1f86596b5203",
+    "sealed_tests/golden.json": "63165a5a00f638d6732506d6b9c4478394b92b41a985f02fdf20d83c5d7e5071",
+    "task.yaml": "c6bb8d66b9b42bce7e72a4b4231b0e9d936f920e96f7fd0b392ebd817c888293",
+    "assets/baseline.json": "3bf89931abe64b84dacd40ab547c74f27238a47102d8d92f0ca9dd130ec20f12"
+  }
+}
