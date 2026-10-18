@@ -63,6 +63,11 @@ exactly the value in the example's `SHA256SUMS` and in
 `FROZEN_HASHES` entry expects a third value, `63f5...`, which does not match
 either the CRLF or LF form of the installed asset.
 
+A full comparison of the evaluator's 15 frozen entries against the installed
+files found only this one mismatch. The other 14 entries match their
+LF-normalized files. That points to a stale hash entry for
+`src/plant_adapter.py`, not a broad asset-corruption problem.
+
 This is a **task-packaging inconsistency**, not a controller failure and not a
 PRAXIST orchestration failure. The frozen evaluator is doing its job by
 refusing to score a candidate whose immutable boundary does not match its own
