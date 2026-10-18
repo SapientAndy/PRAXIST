@@ -1,0 +1,15 @@
+{
+  "ok": false,
+  "metrics": {
+    "total": 55,
+    "passed": 54,
+    "failed": 1,
+    "skipped": 0,
+    "pass_rate": 0.981818,
+    "failures": [
+      "rsi_prototype.sealed_tests.test_foundation.CoreFoundationTest::test_fake_panel_writes_replayable_run_dir"
+    ]
+  },
+  "returncode": 1,
+  "stdout_tail": "   candidates = [\n            candidate\n            for candidate in candidates\n            if _version_satisfies(candidate.identity.version, ref.version)\n        ]\n        if enforce_bundled_execution and ref.kind in HARDCODED_EXECUTION_KINDS:\n            candidates = [\n                candidate\n                for candidate in candidates\n                if candidate.source in TRUSTED_EXECUTION_SOURCES\n            ]\n        if not candidates:\n            if ref.required:\n>               raise ValueError(f\"Required plugin not found: {ref.as_string()}\")\nE               ValueError: Required plugin not found: agent_runtime:fake_runtime\n\ncand/praxist/core/registry.py:414: ValueError\n=========================== short test summary info ============================\nFAILED ../../mnt/c/Users/andyl/AppData/Local/hermes/cache/scratch/praxist/rsi_prototype/sealed_tests/test_foundation.py::CoreFoundationTest::test_fake_panel_writes_replayable_run_dir\n1 failed, 54 passed, 8 subtests passed in 2.36s\n"
+}
