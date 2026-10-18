@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "source": "workspace/redaction.py (span_slice safe parent, hardened 29-case evaluator)",
+  "baseline_median_ms": 14.8998,
+  "baseline_correctness_rate": 1.0,
+  "benchmark_chars": 945159,
+  "measurement": "median from hardened evaluator run; parent is the safe span_slice candidate"
+}

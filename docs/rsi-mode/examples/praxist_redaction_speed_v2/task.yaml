@@ -1,0 +1,192 @@
+schema_version: 1
+task_version: 0.1.0
+task_id: praxist_redaction_speed_v2
+task_name: "PRAXIST Redaction Throughput v2 (safe parent)"
+description_file: description.md
+
+research_direction: |
+  Optimize the pure-Python `redact_text` function in `workspace/redaction.py`
+  while preserving the exact redaction contract. The function scans text for
+  bearer tokens, OpenAI-style keys, GitHub tokens, and named secrets. The
+  baseline applies every regular expression to the whole input.
+
+  Only `workspace/redaction.py` may be edited. The evaluator, sealed golden
+  cases, baseline, task.yaml, and assets are out of bounds. The primary metric
+  is `deterministic_score = correctness_rate * (baseline_median_ms /
+  candidate_median_ms)`. A baseline-equal implementation scores 1.0. A faster
+  implementation that preserves every golden output scores above 1.0. Any
+  correctness failure rejects the candidate regardless of speed.
+
+evaluation:
+  primary_metric: deterministic_score
+  direction: maximize
+  aux_metrics:
+    - correctness_rate
+    - speedup
+    - candidate_median_ms
+    - baseline_median_ms
+  seeds: [1]
+  aggregation: median
+  maturity_policy:
+    min_effort_ratio: 1.0
+    min_coverage_ratio: 1.0
+    require_ratio_gate: false
+    complete_stage_labels: [complete]
+    preliminary_stage_labels: [preliminary]
+  constructive_peer_mix_enabled: false
+  constructive_target_ratio: 0.75
+  launch_guard:
+    enabled: true
+    estimated_heavy_eval_minutes: 0.1
+    estimated_close_grade_eval_minutes: 0.1
+    safety_factor: 1.5
+  diversity_dimensions:
+    - name: mechanism_family
+      description: "Optimization family: regex prefilter, combined regex, literal scan, memoized scans, or hybrid."
+    - name: intervention_surface
+      description: "Only workspace/redaction.py; never the evaluator, golden cases, or baseline."
+    - name: intent
+      description: "Explore, exploit, bridge, repair, or ablate."
+    - name: semantic_family
+      description: "Mechanistically distinct redaction implementation, not a renamed parameter tweak."
+    - name: parent_lineage
+      description: "Frozen baseline or a confirmed parent."
+    - name: novelty_axis
+      description: "The concrete invariant that preserves secret detection while reducing scan cost."
+  frontier_lanes:
+    - name: confirmed
+      description: "Correct, complete candidates on the primary score."
+      k: 2
+      cumulative_cap: 8
+      axes:
+        - {name: deterministic_score, direction: maximize}
+      include_lanes: [confirmed, performance]
+      require_metrics: [deterministic_score]
+      require_truthy_metrics:
+        - scored_complete
+        - protocol_integrity_passed
+        - promotion_eligible
+        - confirmed_performance_gate_passed
+      require_falsey_metrics:
+        - is_smoke_eval
+        - partial
+        - validation_only
+        - suspect_protocol
+        - suspect_leakage
+      parent_eligible: true
+      allow_missing_tier: true
+    - name: incubator
+      description: "Lower-confidence but complete candidates retained for follow-up."
+      k: 4
+      cumulative_cap: 16
+      admit_new_high: true
+      axes:
+        - {name: deterministic_score, direction: maximize}
+        - {name: correctness_rate, direction: maximize}
+      include_lanes: [incubator, performance]
+      require_metrics: [deterministic_score]
+      require_falsey_metrics:
+        - is_smoke_eval
+        - partial
+        - validation_only
+        - suspect_protocol
+        - suspect_leakage
+      parent_eligible: true
+      allow_non_promotable: true
+      allow_missing_tier: true
+
+compute_budget:
+  per_experiment_gpu_hours: 0
+  max_parallel_runs_per_peer: 1
+  resource_scheduler:
+    mode: central
+    initial_concurrent_experiments: 1
+    min_concurrent_experiments: 1
+    max_concurrent_experiments: 1
+    supply_signal_enabled: false
+    default_profile: default
+    profiles:
+      default:
+        accelerator: cpu
+        pressure_domains: [cpu, memory]
+
+task_entrypoints:
+  evaluation:
+    command: evaluations/run.py
+    output_policy: "Write one evaluation_summary.json under the requested output directory."
+    purpose: "Single public task-owned scoring entrypoint for the redaction-speed task."
+
+runtime_outputs:
+  root: experiments
+  gitignored: true
+  policy: "All run outputs, variants, results, logs, and task-local artifacts stay under experiments/."
+
+runtime_environment:
+  cwd: task_project
+  python: /usr/bin/python3
+  protected_child_paths:
+    - assets
+    - evaluations
+    - sealed_tests
+  writable_roots:
+    - workspace
+
+generation_policy:
+  max_generations: 2
+  cohort_size: 2
+  per_generation_hours: 1.5
+  promote_top_k: 2
+  promote_criterion: primary_metric
+
+synthesis_trigger:
+  enabled: true
+  min_findings: 2
+  min_interval_minutes: 5
+  max_interval_minutes: 60
+  min_contributing_peers: 1
+  mature_quorum_fraction: 0.5
+
+dig_lite:
+  enabled: false
+
+quality_diversity:
+  enabled: false
+
+gems:
+  enabled: false
+
+agent:
+  premium_mode: false
+  reasoning_effort: max
+
+praxist_plugins:
+  task_ref: task:praxist_redaction_speed_v2
+  workflow:
+    stage: workflow_stage:research_loop
+  panel:
+    topology: panel_topology:legacy_multi_pi_two_round
+    roles:
+      - task_role:builder_pi
+      - task_role:skeptic_pi
+      - task_role:portfolio_pi
+      - task_role:external_validity_pi
+      - task_role:chair
+  audit_rules: []
+  evaluations: []
+  tools:
+    - tool_server:evaluation_tools
+    - tool_server:frontier_tools
+    - tool_server:finding_graph_query
+    - tool_server:memory_tools
+    - tool_server:run_report
+  graph_maintainers: []
+  optional_workflow_stages:
+    ideation: workflow_stage:ideation_stub
+    paper_writing: workflow_stage:paper_writing_stub
+    reviewer: workflow_stage:reviewer_stub
+
+baselines:
+  - name: baseline_v1
+    metric_name: deterministic_score
+    metric_value: 1.0
+    direction: maximize

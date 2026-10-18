@@ -78,6 +78,9 @@ which roots are mounted read-only for the candidate.
   and throughput evaluator.
 - [`PHASE1_REVIEW.md`](PHASE1_REVIEW.md) — the external differential audit that
   found cross-line redaction gaps in the fast candidates and blocked promotion.
+- [`PHASE1B_REDACTION_V2.md`](PHASE1B_REDACTION_V2.md) — continuation from the
+  safe `span_slice` parent: 29/29, 14.90 ms → 4.49 ms, 3.3190 relative, external
+  fuzz 0/1,200.
 - `../../rsi_mode/` — executable promotion recorder and score-curve renderer.
   The recorder refuses correctness failures, duplicate candidates, and approved
   scores that do not improve on the best approved score; approval is explicit.
