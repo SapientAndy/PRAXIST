@@ -20,15 +20,21 @@ The evaluator never imports the workspace directly. It copies `workspace/praxist
 
 Environment: WSL Ubuntu, Python 3.12, `pytest` 8.x, 2026-10-18.
 
-| Metric | Value |
-|---|---|
-| Tests | 55 |
-| Passed | 54 |
-| Failed | 1 |
-| Pass rate | **0.9818** |
-| Runtime | ~2.4 s |
+| Metric | Clean baseline | Degraded v1 (4 injected bugs) |
+|---|---|---|
+| Tests | 55 | 55 |
+| Passed | 54 | 50 |
+| Failed | 1 | 5 |
+| Pass rate | **0.9818** | **0.9091** |
+| Runtime | ~2.4 s | ~2.2 s |
 
-The single failure is `test_fake_panel_writes_replayable_run_dir` (`Required plugin not found: agent_runtime:fake_runtime`). It is a bundled-plugin discovery issue in the isolated copy, not a candidate regression. It is excluded from the "headroom" discussion below.
+The single clean-baseline failure is `test_fake_panel_writes_replayable_run_dir` (`Required plugin not found: agent_runtime:fake_runtime`). It is a bundled-plugin discovery issue in the isolated copy, not a candidate regression, and it is out of scope for this task. The maximum achievable score is therefore **54/55**.
+
+`assets/baselines/baseline.json` is the clean measurement; `assets/baselines/degraded_v1.json` is the starting state for the self-repair experiment.
+
+## Bug set v1
+
+Four deterministic regressions are injected into `workspace/praxist` (see `BUGSET.md`). The sealed tests catch all four: reasoning-policy defaults, artifact semantics, generation provenance, and lossless memory limits. The task is to restore the clean baseline without editing the sealed tests or the evaluator.
 
 ## What this proves
 

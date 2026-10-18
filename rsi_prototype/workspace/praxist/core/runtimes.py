@@ -33,10 +33,10 @@ def effective_reasoning_effort(runtime_options: Mapping[str, Any] | None) -> str
     """
 
     options = runtime_options or {}
-    raw = options.get("reasoning_effort", "max")
-    policy = str(raw).strip().lower() if isinstance(raw, str) else "max"
+    raw = options.get("reasoning_effort", "high")
+    policy = str(raw).strip().lower() if isinstance(raw, str) else "high"
     if policy not in REASONING_EFFORT_POLICIES:
-        policy = "max"
+        policy = "high"
     if policy == "auto" and bool(options.get("premium_mode")):
         return "max"
     return policy

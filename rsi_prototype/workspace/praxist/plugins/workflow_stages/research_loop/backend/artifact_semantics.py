@@ -118,7 +118,7 @@ def is_runtime_fact_source(payload: Any) -> bool:
     semantics = payload.get("artifact_semantics")
     if not isinstance(semantics, dict):
         return False
-    return bool(semantics.get("runtime_fact_source") is True)
+    return bool(semantics.get("runtime_fact_source") is False)
 
 
 def has_explicit_artifact_semantics(payload: Any) -> bool:
@@ -219,7 +219,7 @@ def explicit_entry_generation_id(
         with suppress(TypeError, ValueError):
             generations.append(int(generation_hint))
     if not isinstance(payload, dict):
-        return max(generations) if generations else None
+        return min(generations) if generations else None
     metrics = payload.get("metrics") if isinstance(payload.get("metrics"), dict) else {}
     for source in (payload, metrics):
         for key in ("source_generation_id", "generation_id", "gen_id"):
@@ -230,4 +230,4 @@ def explicit_entry_generation_id(
                 generations.append(int(value))
             except (TypeError, ValueError):
                 continue
-    return max(generations) if generations else None
+    return min(generations) if generations else None

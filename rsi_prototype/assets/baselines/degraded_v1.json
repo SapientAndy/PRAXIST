@@ -1,0 +1,19 @@
+{
+  "ok": false,
+  "metrics": {
+    "total": 55,
+    "passed": 50,
+    "failed": 5,
+    "skipped": 0,
+    "pass_rate": 0.909091,
+    "failures": [
+      "rsi_prototype.sealed_tests.test_agent_loop_contracts.AgentLoopContractsTest::test_lossless_continuation_keeps_full_task_and_uses_larger_finding_batch",
+      "rsi_prototype.sealed_tests.test_agent_loop_contracts.AgentLoopContractsTest::test_reasoning_policy_parses_and_preserves_premium_compatibility",
+      "rsi_prototype.sealed_tests.test_artifact_semantics_contracts.ArtifactSemanticsContractsTest::test_explicit_entry_generation_uses_latest_recorded_provenance_only",
+      "rsi_prototype.sealed_tests.test_artifact_semantics_contracts.ArtifactSemanticsContractsTest::test_semantics_distinguish_canonical_state_from_derived_views",
+      "rsi_prototype.sealed_tests.test_foundation.CoreFoundationTest::test_fake_panel_writes_replayable_run_dir"
+    ]
+  },
+  "returncode": 1,
+  "stdout_tail": "st::test_lossless_continuation_keeps_full_task_and_uses_larger_finding_batch\nFAILED ../../mnt/c/Users/andyl/AppData/Local/hermes/cache/scratch/praxist/rsi_prototype/sealed_tests/test_agent_loop_contracts.py::AgentLoopContractsTest::test_reasoning_policy_parses_and_preserves_premium_compatibility\nFAILED ../../mnt/c/Users/andyl/AppData/Local/hermes/cache/scratch/praxist/rsi_prototype/sealed_tests/test_artifact_semantics_contracts.py::ArtifactSemanticsContractsTest::test_explicit_entry_generation_uses_latest_recorded_provenance_only\nFAILED ../../mnt/c/Users/andyl/AppData/Local/hermes/cache/scratch/praxist/rsi_prototype/sealed_tests/test_artifact_semantics_contracts.py::ArtifactSemanticsContractsTest::test_semantics_distinguish_canonical_state_from_derived_views\nFAILED ../../mnt/c/Users/andyl/AppData/Local/hermes/cache/scratch/praxist/rsi_prototype/sealed_tests/test_foundation.py::CoreFoundationTest::test_fake_panel_writes_replayable_run_dir\n5 failed, 50 passed, 8 subtests passed in 2.22s\n"
+}
