@@ -71,6 +71,18 @@ correctness 1.0 on all seven cases. The improvement is a real algorithmic change
 - The task is intentionally simple. A harder benchmark is required before using
   the word "weak RSI".
 
+## Takeover validation status
+
+A separate `praxist --takeover --operator codex --task-path ...` attempt was
+made after the direct run. It did not reach task initialization: the installed
+Codex CLI reports `Not logged in`, so the takeover TUI waited at authentication
+and was stopped. No task files were changed by that attempt.
+
+That means the direct run evidence above is valid, but the **guided takeover
+path is still unvalidated**. To close that gap, log in to Codex in WSL
+(`codex login`) or install/authenticate Claude Code, then rerun the takeover
+against the same top-k task. Do not send credentials through chat.
+
 ## What this proves
 
 PRAXIST can run a real, multi-generation optimization on a CPU-only task,
