@@ -96,6 +96,11 @@ which roots are mounted read-only for the candidate.
 - [`PHASE3_KERNEL.md`](PHASE3_KERNEL.md) — kernel-copy task: any module in a
   full PRAXIST copy is writable; peer0 4.86×, 54/55, fuzz 0, held-out 4.7–5.0×
   on benchmark shapes and 1.15–1.18× on long-line shapes.
+- [`PHASE3B_NAMED_HINT.md`](PHASE3B_NAMED_HINT.md) — named-secret `str.find`
+  fast path: 18.52 ms → 10.19 ms, 1.817×, 54/55, fuzz 0.
+- [`PHASE3C_LITERAL_SPAN.md`](PHASE3C_LITERAL_SPAN.md) — literal-span fast
+  path: 10.19 ms → 6.92 ms, 1.472×, 54/55, fuzz 0, canonical frontier capture
+  works.
 - `../../rsi_mode/` — executable promotion recorder and score-curve renderer.
   The recorder refuses correctness failures, duplicate candidates, and approved
   scores that do not improve on the best approved score; approval is explicit.
