@@ -104,6 +104,9 @@ which roots are mounted read-only for the candidate.
 - [`PHASE3D_FUSED_LITERAL.md`](PHASE3D_FUSED_LITERAL.md) — fused-literal fast
   path: 6.92 ms → 5.63 ms, 1.229×, 54/55, fuzz 0, held-out 11.6–23.0× on
   benchmark shapes and 1.38–1.46× on long-line shapes.
+- [`PHASE3E_FASTGATE.md`](PHASE3E_FASTGATE.md) — fastgate: 5.63 ms → 5.20 ms,
+  1.083×, 54/55, fuzz 0; current best kernel-copy candidate; stopped when the
+  absolute gain fell to 0.43 ms.
 - `../../rsi_mode/` — executable promotion recorder and score-curve renderer.
   The recorder refuses correctness failures, duplicate candidates, and approved
   scores that do not improve on the best approved score; approval is explicit.
