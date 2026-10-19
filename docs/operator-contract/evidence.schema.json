@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/praxist/operator/evidence.schema.json",
+  "title": "PRAXIST operator evidence manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "run_id",
+    "task_id",
+    "engine_commit",
+    "operator",
+    "provider",
+    "model",
+    "hashes",
+    "artifacts"
+  ],
+  "properties": {
+    "contract_version": { "type": "string", "const": "0.1" },
+    "run_id": { "type": "string", "minLength": 1 },
+    "task_id": { "type": "string", "minLength": 1 },
+    "engine_commit": { "type": "string" },
+    "operator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "provider": { "type": "string" },
+    "model": { "type": "string" },
+    "hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task_yaml", "evaluator"],
+      "properties": {
+        "task_yaml": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "evaluator": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "sealed_manifest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": { "type": "string" },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+        }
+      }
+    }
+  }
+}

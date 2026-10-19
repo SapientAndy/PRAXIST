@@ -1,0 +1,59 @@
+{
+  "contract_version": "0.1",
+  "task_project": "/home/andyl/PraxistExamples/praxist_bo_hardened",
+  "run_id": "run_bo_hardened_v2_1",
+  "checks": [
+    {
+      "name": "validate_same_hashes",
+      "ok": true,
+      "a": {
+        "task_yaml": "11348bdfd14320b1924f2922fdd079015bb038caabff7a0ab729dfe276c752d4",
+        "evaluator": "30fd508099ff95373fcc9c2ce0109f8e0a47c4177f1ae5c40f1fe251d0682620"
+      },
+      "b": {
+        "task_yaml": "11348bdfd14320b1924f2922fdd079015bb038caabff7a0ab729dfe276c752d4",
+        "evaluator": "30fd508099ff95373fcc9c2ce0109f8e0a47c4177f1ae5c40f1fe251d0682620"
+      }
+    },
+    {
+      "name": "status_same_semantics",
+      "ok": true,
+      "a": {
+        "contract_version": "0.1",
+        "run_id": "run_bo_hardened_v2_1",
+        "task_id": "praxist_bo_hardened",
+        "state": "succeeded",
+        "generation": 4,
+        "generations_total": 4,
+        "exit_condition": "max_generations",
+        "best_metric": {
+          "name": "canonical_metric_value",
+          "value": 1.874299,
+          "path": "results/gen0_peer3/gpei3/evaluation_summary.json"
+        }
+      },
+      "b": {
+        "contract_version": "0.1",
+        "run_id": "run_bo_hardened_v2_1",
+        "task_id": "praxist_bo_hardened",
+        "state": "succeeded",
+        "generation": 4,
+        "generations_total": 4,
+        "exit_condition": "max_generations",
+        "best_metric": {
+          "name": "canonical_metric_value",
+          "value": 1.874299,
+          "path": "results/gen0_peer3/gpei3/evaluation_summary.json"
+        }
+      }
+    },
+    {
+      "name": "evidence_same_hashes",
+      "ok": true,
+      "diffs": [],
+      "artifacts_a": 107,
+      "artifacts_b": 107
+    }
+  ],
+  "ok": true
+}

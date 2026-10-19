@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/praxist/operator/status.schema.json",
+  "title": "PRAXIST operator status",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "run_id",
+    "task_id",
+    "state",
+    "generation",
+    "generations_total",
+    "operator",
+    "artifacts"
+  ],
+  "properties": {
+    "contract_version": { "type": "string", "const": "0.1" },
+    "run_id": { "type": "string", "minLength": 1 },
+    "task_id": { "type": "string", "minLength": 1 },
+    "state": {
+      "type": "string",
+      "enum": ["pending", "running", "closing", "succeeded", "failed", "cancelled"]
+    },
+    "generation": { "type": "integer", "minimum": 0 },
+    "generations_total": { "type": "integer", "minimum": 1 },
+    "peers": { "type": "integer", "minimum": 1 },
+    "operator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "provider": { "type": "string" },
+    "model": { "type": "string" },
+    "started_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "exit_condition": { "type": ["string", "null"] },
+    "best_metric": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["name", "value", "path"],
+      "properties": {
+        "name": { "type": "string" },
+        "value": { "type": "number" },
+        "path": { "type": "string" }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_dir"],
+      "properties": {
+        "run_dir": { "type": "string" },
+        "run_summary": { "type": "string" },
+        "frontier_manifest": { "type": "string" },
+        "evidence_manifest": { "type": "string" }
+      }
+    },
+    "violations": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

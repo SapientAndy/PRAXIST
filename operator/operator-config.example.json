@@ -1,0 +1,10 @@
+{
+  "python": "/path/to/python3",
+  "workspace": "/path/to/task-project",
+  "run_dir": "/path/to/task-project/experiments/run_example",
+  "runtime": "agent_runtime:claude_sdk",
+  "model_provider": "model_provider:deepseek_alias",
+  "model": "deepseek-flash",
+  "local": true,
+  "extra_args": []
+}
