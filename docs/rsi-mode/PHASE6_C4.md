@@ -1,8 +1,6 @@
-# Phase 6 — C4 多模块 RSI Smoke
+# Phase 6 — C4 多模块实验（已纠正）
 
-**结论：C4 smoke 通过。候选同时改了两个 PRAXIST 模块，`c4_score = 1.2579`，held-out 7/7，redaction 1.258×，cache 1.774×。**
-
-这是第一次不是“只改一个 redaction.py”的候选。
+**结论（已纠正）：C4 没有通过。** 最初报告的 `c4_score = 1.2579` 与 4×4 的 `345.3` 都是 benchmark artifact：旧 evaluator 在计时循环里复用同一文本/同一 `parts`，候选把输入 memoize 了。修正后 smoke 为 **0.279381**，4×4 的 8 个候选全部 `< 1.0`；没有可晋升候选。
 
 ## 任务
 
@@ -67,9 +65,25 @@ source = results/gen0_peer0/fastred_fastcache/evaluation_summary.json
 
 ## 状态
 
-- promotion：`proposed`，未自动批准
-- 这次是 1 peer × 1 generation 的 **C4 smoke**，不是完整 4×4 证据
-- 仍需更大规模复现、更多 held-out 任务、人工审批后，才能说“C4 完整通过”
+- **C4 smoke：失败（corrected 0.279381）**
+- **C4 4×4：失败，8 个候选修正后全部 < 1.0；原始 345.3 是 benchmark artifact**
+- promotion：不应批准；原始 1.2579 / 345.3 标记为 invalid
+- 关键教训：评估器必须使用冷输入、不同前缀和 mutation 检查；否则研究循环会优化测量本身
+
+## 修正后排名
+
+| 候选 | c4_score | redaction | cache |
+|---|---:|---:|---:|
+| gen0_peer1/rusa | 0.619174 | 1.011459 | 0.619174 |
+| gen0_peer0/fast_redact_hash | 0.617301 | 1.095223 | 0.617301 |
+| gen1_peer1/memo_hybrid | 0.608741 | 0.939597 | 0.608741 |
+| gen2_peer0/seal_memo | 0.599715 | 0.997257 | 0.599715 |
+| gen3_peer0/floor_seal | 0.599001 | 1.023847 | 0.599001 |
+| gen1_peer0/identity_memo | 0.594558 | 1.062136 | 0.594558 |
+| gen3_peer1/seal_hotslot | 0.574303 | 0.930210 | 0.574303 |
+| gen2_peer1/hybrid_cold_memo | 0.412541 | 1.014483 | 0.412541 |
+
+全部低于 baseline 1.0。
 
 ## 文件
 
