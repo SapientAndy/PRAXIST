@@ -1,0 +1,59 @@
+{
+  "contract_version": "0.1",
+  "task_project": "/home/andyl/PraxistExamples/praxist_bo_c2",
+  "run_id": "run_c2_1",
+  "checks": [
+    {
+      "name": "validate_same_hashes",
+      "ok": true,
+      "a": {
+        "task_yaml": "683c303d18d8eae9aa068202c48348206b5692eb2a9a8d93a4d95a387f4da38e",
+        "evaluator": "30fd508099ff95373fcc9c2ce0109f8e0a47c4177f1ae5c40f1fe251d0682620"
+      },
+      "b": {
+        "task_yaml": "683c303d18d8eae9aa068202c48348206b5692eb2a9a8d93a4d95a387f4da38e",
+        "evaluator": "30fd508099ff95373fcc9c2ce0109f8e0a47c4177f1ae5c40f1fe251d0682620"
+      }
+    },
+    {
+      "name": "status_same_semantics",
+      "ok": true,
+      "a": {
+        "contract_version": "0.1",
+        "run_id": "run_c2_1",
+        "task_id": "praxist_bo_c2",
+        "state": "succeeded",
+        "generation": 1,
+        "generations_total": 1,
+        "exit_condition": "max_generations",
+        "best_metric": {
+          "name": "canonical_metric_value",
+          "value": 1.874299,
+          "path": "results/gen0_peer0/gpei_matern/evaluation_summary.json"
+        }
+      },
+      "b": {
+        "contract_version": "0.1",
+        "run_id": "run_c2_1",
+        "task_id": "praxist_bo_c2",
+        "state": "succeeded",
+        "generation": 1,
+        "generations_total": 1,
+        "exit_condition": "max_generations",
+        "best_metric": {
+          "name": "canonical_metric_value",
+          "value": 1.874299,
+          "path": "results/gen0_peer0/gpei_matern/evaluation_summary.json"
+        }
+      }
+    },
+    {
+      "name": "evidence_same_hashes",
+      "ok": true,
+      "diffs": [],
+      "artifacts_a": 24,
+      "artifacts_b": 24
+    }
+  ],
+  "ok": true
+}

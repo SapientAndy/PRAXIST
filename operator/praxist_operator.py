@@ -228,6 +228,15 @@ def cmd_collect(args) -> int:
 
 def cmd_run(args) -> int:
     cfg = json.loads(Path(args.config).read_text(encoding="utf-8"))
+    env = os.environ.copy()
+    env_file = cfg.get("env_file")
+    if env_file and Path(env_file).is_file():
+        for line in Path(env_file).read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            env[key.strip()] = value.strip().strip('"').strip("'")
     cmd = [
         cfg.get("python", sys.executable), "-m", "praxist.run", "run",
         "--task-path", str(Path(args.task_project).resolve()),
@@ -240,7 +249,7 @@ def cmd_run(args) -> int:
     if cfg.get("local", True):
         cmd.append("--local")
     cmd.extend(cfg.get("extra_args", []))
-    proc = subprocess.run(cmd, cwd=str(Path(args.task_project).resolve()))
+    proc = subprocess.run(cmd, cwd=str(Path(args.task_project).resolve()), env=env)
     return proc.returncode
 
 

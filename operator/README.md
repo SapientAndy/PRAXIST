@@ -38,13 +38,23 @@ It invokes the adapter under two operator identities and checks that:
 
 On the BO transfer run `run_bo_hardened_v2_1`, C1 passed with 107 artifacts and zero content diffs.
 
+C2 also passed: `praxist_bo_c2` (1 peer × 1 generation, task project without
+absolute paths) was launched through this adapter, reached best metric
+`1.874299`, and produced 24 evidence artifacts.
+
+## Credentials
+
+`run` accepts an optional `env_file` in the operator config. It loads
+`KEY=VALUE` pairs into the subprocess environment and never writes them to
+status or evidence.
+
 ## What this does not prove yet
 
-- C2: launching a new run through the adapter with a second operator.
 - C3: a genuinely different front-end agent producing the same evidence.
 - C4: RSI boundary (candidate/evaluator separation, append-only promotion).
 
-Those are the next gates. C1 only proves the adapter has a stable, agent-independent shape.
+C1/C2 prove the adapter has a stable, agent-independent shape and can launch a
+new run. They do not prove multi-agent losslessness.
 
 ## Known portability warnings
 
