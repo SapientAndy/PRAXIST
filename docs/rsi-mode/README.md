@@ -107,6 +107,10 @@ which roots are mounted read-only for the candidate.
 - [`PHASE3E_FASTGATE.md`](PHASE3E_FASTGATE.md) — fastgate: 5.63 ms → 5.20 ms,
   1.083×, 54/55, fuzz 0; current best kernel-copy candidate; stopped when the
   absolute gain fell to 0.43 ms.
+- [`PHASE4_TRANSFER.md`](PHASE4_TRANSFER.md) — 4 peers × 4 generations
+  black-box experimental-design A/B: RSI-hardened reached `bo_score ≥ 1.5`
+  53.5% faster and finished 21.9% faster, but final score improved only 1.05%;
+  time gate passed, score gate failed.
 - `../../rsi_mode/` — executable promotion recorder and score-curve renderer.
   The recorder refuses correctness failures, duplicate candidates, and approved
   scores that do not improve on the best approved score; approval is explicit.
