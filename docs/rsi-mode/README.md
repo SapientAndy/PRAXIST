@@ -111,6 +111,11 @@ which roots are mounted read-only for the candidate.
   black-box experimental-design A/B: RSI-hardened reached `bo_score ≥ 1.5`
   53.5% faster and finished 21.9% faster, but final score improved only 1.05%;
   time gate passed, score gate failed.
+- [`RSI_TASK_BOUNDARY.md`](RSI_TASK_BOUNDARY.md) — minimum candidate/evaluator/
+  promotion boundary for an RSI task, enforced by `rsi_mode/boundary.py`.
+- [`../operator-contract/OPERATOR_CONTRACT.md`](../operator-contract/OPERATOR_CONTRACT.md)
+  — portable operator contract v0.1: lifecycle, status/evidence schemas, and
+  C1 conformance.
 - `../../rsi_mode/` — executable promotion recorder and score-curve renderer.
   The recorder refuses correctness failures, duplicate candidates, and approved
   scores that do not improve on the best approved score; approval is explicit.
