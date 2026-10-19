@@ -90,6 +90,12 @@ which roots are mounted read-only for the candidate.
 - [`PHASE1E_REDACTION_V5.md`](PHASE1E_REDACTION_V5.md) — continuation from the
   v4 spanmerge winner: 29/29, 1.75 ms → 1.40 ms, 1.2498 relative, external fuzz
   0/1,200.
+- [`PHASE2_HELDOUT.md`](PHASE2_HELDOUT.md) — held-out audit: exactness passes;
+  67–68× on benchmark-shaped seeds, 16–138× across density, ~1× on long-line
+  shapes.
+- [`PHASE3_KERNEL.md`](PHASE3_KERNEL.md) — kernel-copy task: any module in a
+  full PRAXIST copy is writable; peer0 4.86×, 54/55, fuzz 0, held-out 4.7–5.0×
+  on benchmark shapes and 1.15–1.18× on long-line shapes.
 - `../../rsi_mode/` — executable promotion recorder and score-curve renderer.
   The recorder refuses correctness failures, duplicate candidates, and approved
   scores that do not improve on the best approved score; approval is explicit.
