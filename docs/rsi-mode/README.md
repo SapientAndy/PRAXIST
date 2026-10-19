@@ -113,6 +113,8 @@ which roots are mounted read-only for the candidate.
   time gate passed, score gate failed.
 - [`RSI_TASK_BOUNDARY.md`](RSI_TASK_BOUNDARY.md) — minimum candidate/evaluator/
   promotion boundary for an RSI task, enforced by `rsi_mode/boundary.py`.
+- [`PHASE6_C4.md`](PHASE6_C4.md) — first multi-module C4 smoke: redaction
+  1.258× + cache 1.774×, held-out 7/7, `c4_score=1.2579`; promotion proposed.
 - [`../operator-contract/OPERATOR_CONTRACT.md`](../operator-contract/OPERATOR_CONTRACT.md)
   — portable operator contract v0.1: lifecycle, status/evidence schemas, and
   C1 conformance.
