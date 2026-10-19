@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import math
+import os
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
@@ -11,6 +12,23 @@ from typing import Any
 from praxist.core.budget import ALLOWED_BUDGET_UNITS
 from praxist.core.protocol import BudgetDecision, BudgetRequest
 from praxist.core.storage import append_jsonl, read_jsonl, utc_now
+
+
+def _blended_price_usd_per_mtok() -> float | None:
+    """Blended token price from the environment, if the operator configured one.
+
+    Praxist records token counts but no money. A desktop client cannot invent a
+    price, so the operator may declare one here and every usage record then
+    carries a `cost_usd` estimate alongside the raw units.
+    """
+    raw = os.environ.get("PRAXIST_PRICE_USD_PER_MTOK", "").strip()
+    if not raw:
+        return None
+    try:
+        value = float(raw)
+    except ValueError:
+        return None
+    return value if value >= 0 else None
 
 
 class BudgetLedger:
@@ -137,6 +155,20 @@ class BudgetLedger:
                 "actual_usage": dict(actual_usage),
             }
         )
+        price = _blended_price_usd_per_mtok()
+        if price is not None and isinstance(actual_usage, dict):
+            tokens = actual_usage.get("tokens")
+            try:
+                tokens_value = float(tokens) if tokens is not None else None
+            except (TypeError, ValueError):
+                tokens_value = None
+            if tokens_value is not None:
+                record["cost_usd"] = round(tokens_value / 1_000_000 * price, 6)
+                record["cost_basis"] = {
+                    "unit": "tokens",
+                    "price_usd_per_mtok": price,
+                    "source": "env:PRAXIST_PRICE_USD_PER_MTOK",
+                }
         if overrun_details:
             record["budget_overrun"] = True
             record["overrun_units"] = sorted({str(detail["unit"]) for detail in overrun_details})
