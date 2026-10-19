@@ -42,6 +42,10 @@ C2 also passed: `praxist_bo_c2` (1 peer × 1 generation, task project without
 absolute paths) was launched through this adapter, reached best metric
 `1.874299`, and produced 24 evidence artifacts.
 
+C3 also passed: the independent Node.js client (`node_operator.js`) launched
+`run_c3_1`, reached best metric `1.881592`, and produced 22 evidence artifacts
+with the same hashes as the Python adapter.
+
 ## Credentials
 
 `run` accepts an optional `env_file` in the operator config. It loads
@@ -50,11 +54,12 @@ status or evidence.
 
 ## What this does not prove yet
 
-- C3: a genuinely different front-end agent producing the same evidence.
-- C4: RSI boundary (candidate/evaluator separation, append-only promotion).
+- C4: RSI boundary with a multi-module candidate, held-out evaluation, and
+  promotion evidence.
 
-C1/C2 prove the adapter has a stable, agent-independent shape and can launch a
-new run. They do not prove multi-agent losslessness.
+C1/C2/C3 prove two independent operator implementations agree on task hashes,
+status semantics, and evidence. They do not prove cross-machine or cross-provider
+losslessness.
 
 ## Known portability warnings
 
