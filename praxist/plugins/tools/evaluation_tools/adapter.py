@@ -367,6 +367,7 @@ async def _handle_share_finding(args: dict[str, Any]) -> dict[str, Any]:
     notes = args.get("notes", "")
     caller_peer_id = args.get("peer_id", "") or _get_env("PEER_ID", "") or ""
     links_raw = args.get("links", "")
+    supersedes_raw = args.get("supersedes", "")
     design_dimensions_raw = args.get("design_dimensions", "")
 
     valid_types = {"result", "hypothesis", "insight", "challenge", "error"}
@@ -399,6 +400,19 @@ async def _handle_share_finding(args: dict[str, Any]) -> dict[str, Any]:
                         )
         except (json.JSONDecodeError, TypeError):
             links_list = []
+
+    supersedes_list: list[str] = []
+    if supersedes_raw:
+        try:
+            parsed_supersedes = (
+                json.loads(supersedes_raw) if isinstance(supersedes_raw, str) else supersedes_raw
+            )
+            if isinstance(parsed_supersedes, str):
+                parsed_supersedes = [parsed_supersedes]
+            if isinstance(parsed_supersedes, list):
+                supersedes_list = [str(item) for item in parsed_supersedes if item]
+        except (json.JSONDecodeError, TypeError):
+            supersedes_list = []
 
     import uuid
 
@@ -499,12 +513,38 @@ async def _handle_share_finding(args: dict[str, Any]) -> dict[str, Any]:
     if links_list:
         # Stash in extra so findings_ingest + graph builder can see it.
         finding["links"] = links_list
+    if supersedes_list:
+        # The legacy materializer reads this key to emit `supersedes` in
+        # findings.jsonl; without it every lineage edge is empty.
+        finding["supersedes"] = supersedes_list
     # R7-1 fix: preserve extra dict at top level so the row-mapper's
     # "flatten extra into top-level" pattern (local_store._row_to_finding)
     # exposes peer_role + target_hypothesis + any peer-supplied keys
     # to downstream consumers (frontier.promote, PI synthesis prompt).
     if extra_dict:
         finding["extra"] = extra_dict
+
+    # Infer lineage when the peer did not declare it: the same variant reappearing
+    # in a later generation is a retry of the earlier finding.
+    if not supersedes_list and variant_name and _is_local_mode():
+        try:
+            from praxist.plugins.workflow_stages.research_loop.backend.tools.local_store import (
+                earlier_findings_for_variant,
+            )
+
+            inferred = earlier_findings_for_variant(
+                variant_name,
+                int(finding.get("generation_id") or 0),
+            )
+            if inferred:
+                finding["supersedes"] = inferred
+                logger.info(
+                    "share_finding: inferred supersedes for variant %s -> %s",
+                    variant_name,
+                    inferred,
+                )
+        except Exception as exc:  # inference must never block a finding
+            logger.debug("share_finding: lineage inference skipped: %s", exc)
 
     # Save to filesystem (always — agents read this directory directly)
     try:
@@ -1365,7 +1405,10 @@ if tool is not None:
         "are excluded from the deployable frontier candidate pool. In "
         "task-configured lane mode, role filtering is lane-local, so "
         "falsifier/control findings can still enter diagnostic lanes when "
-        "the task explicitly allows them.",
+        "the task explicitly allows them. "
+        "OPTIONAL supersedes: JSON list (or single id) of earlier finding ids "
+        "this finding replaces, e.g. '[\"<uuid>\"]'. Use it when you retry or "
+        "improve a previous variant so lineage survives into findings.jsonl.",
         {
             "finding_type": str,
             "title": str,
@@ -1377,6 +1420,7 @@ if tool is not None:
             "links": str,
             "design_dimensions": str,
             "extra": str,
+            "supersedes": str,
         },
     )(_handle_share_finding)
 

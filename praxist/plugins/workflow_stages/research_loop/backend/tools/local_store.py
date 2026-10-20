@@ -648,6 +648,32 @@ def get_findings(
     return [_row_to_finding(r) for r in rows]
 
 
+def earlier_findings_for_variant(
+    variant_name: str,
+    before_generation: int,
+    limit: int = 3,
+) -> list[str]:
+    """Ids of earlier findings that reported the same variant.
+
+    Peers rarely pass an explicit `supersedes`, so lineage stayed empty. A variant
+    that reappears in a later generation is by definition a retry of the earlier
+    one; this returns those ids newest-first, capped so a long-running variant
+    does not accumulate an unbounded edge list.
+    """
+    if not variant_name:
+        return []
+    try:
+        with _get_conn(readonly=True) as conn:
+            rows = conn.execute(
+                "SELECT id FROM findings WHERE variant_name = ? AND generation_id < ? "
+                "ORDER BY generation_id DESC, timestamp DESC LIMIT ?",
+                (variant_name, int(before_generation), int(limit)),
+            ).fetchall()
+    except Exception:
+        return []
+    return [str(row[0]) for row in rows]
+
+
 def get_all_findings() -> list[dict[str, Any]]:
     """Get all findings (for sync compatibility)."""
     return get_findings()
