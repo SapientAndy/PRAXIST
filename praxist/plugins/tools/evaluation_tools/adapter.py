@@ -526,7 +526,7 @@ async def _handle_share_finding(args: dict[str, Any]) -> dict[str, Any]:
 
     # Infer lineage when the peer did not declare it: the same variant reappearing
     # in a later generation is a retry of the earlier finding.
-    if not supersedes_list and variant_name and _is_local_mode():
+    if not supersedes_list and variant_name:
         try:
             from praxist.plugins.workflow_stages.research_loop.backend.tools.local_store import (
                 earlier_findings_for_variant,

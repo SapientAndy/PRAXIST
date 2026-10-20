@@ -18,18 +18,19 @@ with tempfile.TemporaryDirectory() as tmp:
         "title": "first",
         "content": "",
         "metrics": {},
-        "variant_name": "merge_sort",
+        "variant_name": "gen0_peer1_merge_sort",
         "notes": "",
         "peer_id": "gen0_peer0",
         "generation_id": 0,
         "timestamp": "2026-01-01T00:00:00",
     }
-    second = dict(first, id="find-gen1", generation_id=1, title="retry")
+    second = dict(first, id="find-gen1", generation_id=1, title="retry", variant_name="gen1_peer0_merge_sort_v2")
     ls.insert_finding(first)
     ls.insert_finding(second)
 
-    ids = ls.earlier_findings_for_variant("merge_sort", 1)
+    ids = ls.earlier_findings_for_variant("gen1_peer0_merge_sort", 1)
     print(json.dumps(ids))
     assert ids == ["find-gen0"], ids
-    assert ls.earlier_findings_for_variant("merge_sort", 0) == []
+    assert ls.earlier_findings_for_variant("gen1_peer0_merge_sort", 0) == []
+    assert ls.normalize_variant_name("gen3_peer12_merge_sort_v4") == "merge_sort"
     print("OK lineage inference")

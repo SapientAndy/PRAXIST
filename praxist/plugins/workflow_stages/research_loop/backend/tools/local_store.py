@@ -648,30 +648,53 @@ def get_findings(
     return [_row_to_finding(r) for r in rows]
 
 
+_VARIANT_GEN_PREFIX = re.compile(r"^gen\d+_peer\d+_", re.IGNORECASE)
+_VARIANT_SUFFIX = re.compile(r"(_v\d+|_run\d+)$", re.IGNORECASE)
+
+
+def normalize_variant_name(name: str) -> str:
+    """Comparable key for variant names.
+
+    Peers name variants after their generation and peer ("gen0_peer1_merge_sort"),
+    so the same mechanism gets a different name every generation. Strip those
+    prefixes/suffixes and punctuation before comparing.
+    """
+    text = str(name or "").strip().lower()
+    text = _VARIANT_GEN_PREFIX.sub("", text)
+    text = _VARIANT_SUFFIX.sub("", text)
+    return re.sub(r"[^a-z0-9]+", "_", text).strip("_")
+
+
 def earlier_findings_for_variant(
     variant_name: str,
     before_generation: int,
     limit: int = 3,
 ) -> list[str]:
-    """Ids of earlier findings that reported the same variant.
+    """Ids of earlier findings whose variant normalizes to the same key.
 
     Peers rarely pass an explicit `supersedes`, so lineage stayed empty. A variant
     that reappears in a later generation is by definition a retry of the earlier
-    one; this returns those ids newest-first, capped so a long-running variant
-    does not accumulate an unbounded edge list.
+    one; names differ only by their gen/peer prefix, so compare normalized keys.
     """
-    if not variant_name:
+    key = normalize_variant_name(variant_name)
+    if not key:
         return []
     try:
         with _get_conn(readonly=True) as conn:
             rows = conn.execute(
-                "SELECT id FROM findings WHERE variant_name = ? AND generation_id < ? "
-                "ORDER BY generation_id DESC, timestamp DESC LIMIT ?",
-                (variant_name, int(before_generation), int(limit)),
+                "SELECT id, variant_name FROM findings WHERE generation_id < ? "
+                "ORDER BY generation_id DESC, timestamp DESC LIMIT 500",
+                (int(before_generation),),
             ).fetchall()
     except Exception:
         return []
-    return [str(row[0]) for row in rows]
+    matched: list[str] = []
+    for row in rows:
+        if normalize_variant_name(row[1]) == key:
+            matched.append(str(row[0]))
+            if len(matched) >= limit:
+                break
+    return matched
 
 
 def get_all_findings() -> list[dict[str, Any]]:
